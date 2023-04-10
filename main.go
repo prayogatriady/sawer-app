@@ -5,31 +5,57 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/prayogatriady/sawer-app/controller"
 	"github.com/prayogatriady/sawer-app/db"
+	"github.com/prayogatriady/sawer-app/middleware"
 	"github.com/prayogatriady/sawer-app/repository"
 	"github.com/prayogatriady/sawer-app/service"
 )
 
 func main() {
 
+	if err := godotenv.Load(); err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	// set environtment variable for for PORT
 	PORT := os.Getenv("PORT")
 	if PORT == "" {
-		log.Println("Environment variable PORT must be set")
+		log.Fatal("Environment variable PORT must be set")
 	}
 
-	// db, err := db.InitMySQL()
-	db, err := db.InitPostgreSQL()
+	DB_USER := os.Getenv("DB_USER")
+	if DB_USER == "" {
+		log.Fatal("Environment variable DB_USER must be set")
+	}
+
+	DB_PASSWORD := os.Getenv("DB_PASSWORD")
+	// if DB_PASSWORD == "" {
+	// 	log.Fatal("Environment variable DB_PASSWORD must be set")
+	// }
+
+	DB_HOST := os.Getenv("DB_HOST")
+	if DB_HOST == "" {
+		log.Fatal("Environment variable DB_HOST must be set")
+	}
+
+	DB_PORT := os.Getenv("DB_PORT")
+	if DB_PORT == "" {
+		log.Fatal("Environment variable DB_PORT must be set")
+	}
+
+	DB_NAME := os.Getenv("DB_NAME")
+	if DB_NAME == "" {
+		log.Fatal("Environment variable DB_NAME must be set")
+	}
+
+	db, err := db.NewConnectDB(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME).InitMySQL()
 	if err != nil {
-		log.Println(err)
-	}
-
-	userRepo := repository.NewUserRepository(db)
-	if err := userRepo.CreateTables(); err != nil {
 		log.Fatal(err)
 	}
 
+	userRepo := repository.NewUserRepository(db)
 	userServ := service.NewUserService(userRepo)
 	userCont := controller.NewUserController(userServ)
 
@@ -37,7 +63,14 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		api.GET("/signup", userCont.Signup)
+		api.POST("/signup", userCont.Signup)
+		api.POST("/signin", userCont.Signin)
+
+		r.Use(middleware.AuthMiddleware)
+
+		api.GET("/profile", userCont.Profile)
+		api.PUT("/edit", userCont.EditProfile)
+		api.DELETE("/delete", userCont.DeleteUser)
 	}
 
 	log.Fatal(r.Run(":" + PORT))

@@ -25,7 +25,21 @@ type UserResponse struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
+type UserTokenResponse struct {
+	Token string `json:"token"`
+}
+
 type UserSignupRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UserSigninRequest struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}
+
+type UserEditRequest struct {
 	Username string `json:"username"`
 	Password string `json:"password"`
 }

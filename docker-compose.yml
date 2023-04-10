@@ -1,43 +1,41 @@
 version: '3.8'
 services:
-  # mysql-sawer:
-  #   image: mysql:latest
-  #   container_name: mysql
-  #   ports:
-  #     - 3306:3306
-  #   environment:
-  #     - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
-  #     - MYSQL_DATABASE=${DB_NAME}
-  #   # networks:
-  #   #   - my-network
-  #   # volumes:
-  #   #   - /home/yogadobo/Documents/Go/Projects/twitter-like/mysql/migrate.sql:/docker-entrypoint-initdb.d/migrate.sql
-  db:
-    image: postgres
-    container_name: postgres
+  mysql-db:
+    image: mysql:latest
+    container_name: mysql
     ports:
-      - "5432:5432"
+      - 3305:${DB_PORT}
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: sawer
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
     volumes:
-      - dbdata:/var/lib/postgresql/data
+      - db_data:/var/lib/mysql
+  # postgres-db:
+  #   image: postgres
+  #   container_name: postgres
+  #   ports:
+  #     - "5432:5432"
+  #   environment:
+  #     POSTGRES_USER: postgres
+  #     POSTGRES_PASSWORD: password
+  #     POSTGRES_DB: sawer
+    # volumes:
+    #   - db_data:/var/lib/postgresql/data
   sawer:
     build: .
     image: sawer
     container_name: sawer
     ports:
-      - 9000:9000
+      - ${PORT}:${PORT}
     environment:
-      # - DB_HOST=${DB_HOST}
-      # - DB_USER=${DB_USER}
-      # - DB_PASSWORD=${DB_PASSWORD}
-      # - DB_NAME=${DB_NAME}
-      # - DB_PORT=${DB_PORT}
+      - DB_HOST=${DB_HOST}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - DB_PORT=${DB_PORT}
       - PORT=${PORT}
     depends_on:
-      - db
+      - mysql-db
 
 volumes:
-  dbdata:
+  db_data:

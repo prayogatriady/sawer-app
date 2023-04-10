@@ -2,14 +2,19 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/prayogatriady/sawer-app/model"
 	"gorm.io/gorm"
 )
 
 type UserRepoInterface interface {
-	CreateTables() error
 	CreateUser(ctx context.Context, user *model.UserEntity) (*model.UserEntity, error)
+	GetUser(ctx context.Context, userID int) (*model.UserEntity, error)
+	GetUserByUsername(ctx context.Context, username string) (*model.UserEntity, error)
+	GetUserByUsernamePassword(ctx context.Context, username string, password string) (*model.UserEntity, error)
+	UpdateUser(ctx context.Context, userID int, updateUser *model.UserEntity) (*model.UserEntity, error)
+	DeleteUser(ctx context.Context, userID int) error
 }
 
 type UserRepository struct {
@@ -22,28 +27,64 @@ func NewUserRepository(db *gorm.DB) UserRepoInterface {
 	}
 }
 
-func (ur *UserRepository) CreateTables() error {
-	query := `CREATE TABLE IF NOT EXISTS users (
-		id BIGINT NOT NULL AUTO_INCREMENT,
-		username VARCHAR(50) NOT NULL,
-		password VARCHAR(255) NOT NULL,
-		balance INT DEFAULT 0,
-		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-		updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-		deleted_at TIMESTAMP DEFAULT NULL,
-		INDEX (id),
-		PRIMARY KEY (id)
-	)`
-
-	if err := ur.DB.Exec(query).Error; err != nil {
-		return err
-	}
-	return nil
-}
-
 func (ur *UserRepository) CreateUser(ctx context.Context, userEntity *model.UserEntity) (*model.UserEntity, error) {
-	if err := ur.DB.Table("users").Create(&userEntity).Error; err != nil {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	if err := ur.DB.WithContext(ctx).Table("users").Create(&userEntity).Error; err != nil {
 		return userEntity, err
 	}
 	return userEntity, nil
+}
+
+func (ur *UserRepository) GetUser(ctx context.Context, userID int) (*model.UserEntity, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var user *model.UserEntity
+	if err := ur.DB.WithContext(ctx).Table("users").Where("id =?", userID).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (ur *UserRepository) GetUserByUsername(ctx context.Context, username string) (*model.UserEntity, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var user *model.UserEntity
+	if err := ur.DB.WithContext(ctx).Table("users").Where("username =?", username).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (ur *UserRepository) GetUserByUsernamePassword(ctx context.Context, username string, password string) (*model.UserEntity, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var user *model.UserEntity
+	if err := ur.DB.WithContext(ctx).Table("users").Where("username =? AND password =?", username, password).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+func (ur *UserRepository) UpdateUser(ctx context.Context, userID int, updateUser *model.UserEntity) (*model.UserEntity, error) {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	var user *model.UserEntity
+	if err := ur.DB.WithContext(ctx).Table("users").Where("id =?", userID).Updates(&updateUser).Find(&user).Error; err != nil {
+		return user, err
+	}
+	return user, nil
+}
+func (ur *UserRepository) DeleteUser(ctx context.Context, userID int) error {
+	ctx, cancel := context.WithTimeout(ctx, 2*time.Second)
+	defer cancel()
+
+	if err := ur.DB.WithContext(ctx).Table("users").Where("id =?", userID).Delete(&model.UserEntity{}).Error; err != nil {
+		return err
+	}
+	return nil
 }
