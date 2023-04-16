@@ -5,7 +5,6 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 	"github.com/prayogatriady/sawer-app/controller"
 	"github.com/prayogatriady/sawer-app/db"
 	"github.com/prayogatriady/sawer-app/middleware"
@@ -15,42 +14,13 @@ import (
 
 func main() {
 
-	if err := godotenv.Load(); err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	// set environtment variable for for PORT
-	PORT := os.Getenv("PORT")
-	if PORT == "" {
-		log.Fatal("Environment variable PORT must be set")
-	}
-
-	DB_USER := os.Getenv("DB_USER")
-	if DB_USER == "" {
-		log.Fatal("Environment variable DB_USER must be set")
-	}
-
-	DB_PASSWORD := os.Getenv("DB_PASSWORD")
-	// if DB_PASSWORD == "" {
-	// 	log.Fatal("Environment variable DB_PASSWORD must be set")
-	// }
-
-	DB_HOST := os.Getenv("DB_HOST")
-	if DB_HOST == "" {
-		log.Fatal("Environment variable DB_HOST must be set")
-	}
-
-	DB_PORT := os.Getenv("DB_PORT")
-	if DB_PORT == "" {
-		log.Fatal("Environment variable DB_PORT must be set")
-	}
-
-	DB_NAME := os.Getenv("DB_NAME")
-	if DB_NAME == "" {
-		log.Fatal("Environment variable DB_NAME must be set")
-	}
-
-	db, err := db.NewConnectDB(DB_USER, DB_PASSWORD, DB_HOST, DB_PORT, DB_NAME).InitMySQL()
+	db, err := db.NewConnectDB(
+		os.Getenv("DB_USER"),
+		os.Getenv("DB_PASSWORD"),
+		os.Getenv("DB_HOST"),
+		os.Getenv("DB_PORT"),
+		os.Getenv("DB_NAME"),
+	).InitMySQL()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -73,5 +43,5 @@ func main() {
 		api.DELETE("/delete", userCont.DeleteUser)
 	}
 
-	log.Fatal(r.Run(":" + PORT))
+	log.Fatal(r.Run(":" + os.Getenv("PORT")))
 }
