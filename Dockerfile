@@ -1,5 +1,5 @@
 # golang image
-FROM golang:1.20-alpine
+FROM golang:1.18-alpine
 
 # set app folder as default working directory
 WORKDIR /app
