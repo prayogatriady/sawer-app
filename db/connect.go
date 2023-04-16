@@ -42,7 +42,7 @@ func (c *ConnectDB) InitMySQL() (*gorm.DB, error) {
 func (c *ConnectDB) CreateTables(db *gorm.DB) error {
 	query := `CREATE TABLE IF NOT EXISTS users (
 		id BIGINT NOT NULL AUTO_INCREMENT,
-		username VARCHAR(50) NOT NULL,
+		username VARCHAR(50) NOT NULL UNIQUE,
 		password VARCHAR(255) NOT NULL,
 		balance INT DEFAULT 0,
 		created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
