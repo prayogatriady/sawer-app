@@ -14,12 +14,38 @@ import (
 
 func main() {
 
+	// set default environment
+	PORT := os.Getenv("PORT")
+	if PORT == "" {
+		PORT = "9000"
+	}
+	DB_USER := os.Getenv("DB_USER")
+	if DB_USER == "" {
+		DB_USER = "root"
+	}
+	DB_PASSWORD := os.Getenv("DB_PASSWORD")
+	if DB_PASSWORD == "" {
+		DB_PASSWORD = ""
+	}
+	DB_HOST := os.Getenv("DB_HOST")
+	if DB_HOST == "" {
+		DB_HOST = "127.0.0.1"
+	}
+	DB_PORT := os.Getenv("DB_PORT")
+	if DB_PORT == "" {
+		DB_PORT = "3306"
+	}
+	DB_NAME := os.Getenv("DB_NAME")
+	if DB_NAME == "" {
+		DB_NAME = "sawer"
+	}
+
 	db, err := db.NewConnectDB(
-		os.Getenv("DB_USER"),
-		os.Getenv("DB_PASSWORD"),
-		os.Getenv("DB_HOST"),
-		os.Getenv("DB_PORT"),
-		os.Getenv("DB_NAME"),
+		DB_USER,
+		DB_PASSWORD,
+		DB_HOST,
+		DB_PORT,
+		DB_NAME,
 	).InitMySQL()
 	if err != nil {
 		log.Fatal(err)
@@ -43,5 +69,5 @@ func main() {
 		api.DELETE("/delete", userCont.DeleteUser)
 	}
 
-	log.Fatal(r.Run(":" + os.Getenv("PORT")))
+	log.Fatal(r.Run(":" + PORT))
 }
