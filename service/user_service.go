@@ -106,10 +106,17 @@ func (us *UserService) EditProfile(ctx context.Context, userId int, userRequest 
 		return &model.UserResponse{}, err
 	}
 
+	// get current balance
+	userCurrentEntity, err := us.UserRepository.GetUser(ctx, userId)
+	if err != nil {
+		return &model.UserResponse{}, err
+	}
+
 	userEntity := &model.UserEntity{
 		ID:       userId,
 		Username: userRequest.Username,
 		Password: string(bytePassword),
+		Balance:  userCurrentEntity.Balance + userRequest.Balance,
 	}
 
 	userEntity, err = us.UserRepository.UpdateUser(ctx, userId, userEntity)

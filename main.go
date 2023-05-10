@@ -25,7 +25,7 @@ func main() {
 	}
 	DB_PASSWORD := os.Getenv("DB_PASSWORD")
 	if DB_PASSWORD == "" {
-		DB_PASSWORD = ""
+		DB_PASSWORD = "root"
 	}
 	DB_HOST := os.Getenv("DB_HOST")
 	if DB_HOST == "" {
