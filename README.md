@@ -1,9 +1,5 @@
 # Greetings! 
-## Welcome to my Sawer golang restapi project
-
-This repo is for
-
-# Sawer - Golang RESTful API Microservice Portfolio
+# Welcome to Sawer - Golang RESTful API Microservice Portfolio
 
 This repository showcases my portfolio of Golang RESTful API microservices. Each microservice represents a specific functionality and follows a modular and scalable architecture.
 
