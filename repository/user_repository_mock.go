@@ -2,7 +2,6 @@ package repository
 
 import (
 	"context"
-	"errors"
 
 	"github.com/prayogatriady/sawer-app/model"
 	"github.com/stretchr/testify/mock"
@@ -12,33 +11,106 @@ type UserRepositoryMock struct {
 	mock.Mock
 }
 
-func (repository *UserRepositoryMock) GetUser(ctx context.Context, userID int) (*model.UserEntity, error) {
-	arguments := repository.Mock.Called(ctx, userID)
-	if arguments.Get(0) == nil {
-		return nil, errors.New("error get user")
-	} else {
-		user := arguments.Get(0).(model.UserEntity)
-		return &user, nil
+func (r *UserRepositoryMock) GetUser(ctx context.Context, userID int) (*model.UserEntity, error) {
+	arguments := r.Mock.Called(ctx, userID)
+
+	var (
+		return1 *model.UserEntity
+		return2 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(*model.UserEntity)
 	}
+	if arguments.Get(1) != nil {
+		return2 = arguments.Get(1).(error)
+	}
+
+	return return1, return2
 }
 
-func (repository *UserRepositoryMock) CreateUser(ctx context.Context, user *model.UserEntity) (*model.UserEntity, error) {
-	// arguments := repository.Mock.Called(ctx, user)
-	return &model.UserEntity{}, nil
+func (r *UserRepositoryMock) CreateUser(ctx context.Context, user *model.UserEntity) (*model.UserEntity, error) {
+	arguments := r.Mock.Called(ctx, user)
+
+	var (
+		return1 *model.UserEntity
+		return2 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(*model.UserEntity)
+	}
+	if arguments.Get(1) != nil {
+		return2 = arguments.Get(1).(error)
+	}
+
+	return return1, return2
 }
 
-func (repository *UserRepositoryMock) GetUserByUsername(ctx context.Context, username string) (*model.UserEntity, error) {
-	return &model.UserEntity{}, nil
+func (r *UserRepositoryMock) GetUserByUsername(ctx context.Context, username string) (*model.UserEntity, error) {
+	arguments := r.Mock.Called(ctx, username)
+
+	var (
+		return1 *model.UserEntity
+		return2 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(*model.UserEntity)
+	}
+	if arguments.Get(1) != nil {
+		return2 = arguments.Get(1).(error)
+	}
+
+	return return1, return2
 }
 
-func (repository *UserRepositoryMock) GetUserByUsernamePassword(ctx context.Context, username string, password string) (*model.UserEntity, error) {
-	return &model.UserEntity{}, nil
+func (r *UserRepositoryMock) GetUserByUsernamePassword(ctx context.Context, username string, password string) (*model.UserEntity, error) {
+	arguments := r.Mock.Called(ctx, username, password)
+
+	var (
+		return1 *model.UserEntity
+		return2 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(*model.UserEntity)
+	}
+	if arguments.Get(1) != nil {
+		return2 = arguments.Get(1).(error)
+	}
+
+	return return1, return2
 }
 
-func (repository *UserRepositoryMock) UpdateUser(ctx context.Context, userID int, updateUser *model.UserEntity) (*model.UserEntity, error) {
-	return &model.UserEntity{}, nil
+func (r *UserRepositoryMock) UpdateUser(ctx context.Context, userID int, updateUser *model.UserEntity) (*model.UserEntity, error) {
+	arguments := r.Mock.Called(ctx, userID, updateUser)
+
+	var (
+		return1 *model.UserEntity
+		return2 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(*model.UserEntity)
+	}
+	if arguments.Get(1) != nil {
+		return2 = arguments.Get(1).(error)
+	}
+
+	return return1, return2
 }
 
-func (repository *UserRepositoryMock) DeleteUser(ctx context.Context, userID int) error {
-	return nil
+func (r *UserRepositoryMock) DeleteUser(ctx context.Context, userID int) error {
+	arguments := r.Mock.Called(ctx, userID)
+
+	var (
+		return1 error
+	)
+
+	if arguments.Get(0) != nil {
+		return1 = arguments.Get(0).(error)
+	}
+
+	return return1
 }
